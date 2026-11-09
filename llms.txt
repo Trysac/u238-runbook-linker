@@ -1,0 +1,16 @@
+# runbook-linker
+
+> Check that every Prometheus alert links to a runbook that exists: local files, heading anchors, base-URL mapping, path containment and suggested links for missing ones Python package `trysac-runbook-linker`, import name `runbook_linker`, MIT licensed,
+> Python >= 3.10, no runtime dependencies.
+
+## Docs
+
+- [README](README.md): problem, install, usage example
+- [AGENTS](AGENTS.md): commands, folder map, conventions, limits
+- [Architecture](docs/ARCHITECTURE.md): shape of the package and its public API
+- [Testing](docs/TESTING.md): how to run and extend the tests
+
+## Optional
+
+- [Stack](docs/STACK.md): tools used and discarded
+- [Changelog](CHANGELOG.md): release history
