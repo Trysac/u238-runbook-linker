@@ -9,4 +9,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Added: full runbook linker implementation with YAML alias/depth validation, path containment, anchor checking, suggestion, and CLI.
 - Initial project structure from the factory utility template.
