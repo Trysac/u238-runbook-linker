@@ -302,6 +302,11 @@ def _resolve_local_path(docs_root: Path, raw_path: str) -> Path | None:
     return ``None`` so they are reported instead of raising.
     """
     decoded = unquote(raw_path)
+    # A decoded NUL byte never names a legitimate file and its handling is
+    # platform dependent (Windows truncates the path, POSIX raises), so reject
+    # it explicitly and treat it as outside the docs root.
+    if "\x00" in decoded:
+        return None
     try:
         candidate = (docs_root / decoded).resolve()
         docs_resolved = docs_root.resolve()
