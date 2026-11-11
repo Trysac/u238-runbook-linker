@@ -1,22 +1,22 @@
-# Security notes
+# Security
 
 ## Threat model
 
-`trysac-runbook-linker` is a pure library without I/O. The main risks are:
+This library parses potentially untrusted Prometheus rule files and checks
+links against a local runbook directory. It provides the following defenses:
 
-- **Supply chain**: a compromised dependency or CI action. Mitigation: no runtime dependencies,
-  Dependabot weekly updates, actions pinned to major versions, minimal workflow permissions.
-- **Leaked secrets**: tokens committed by mistake. Mitigation: `gitleaks` runs in the local gates
-  and in CI; `.env` files are git-ignored.
-- **Insecure code**: shell injection, weak hashes, unsafe deserialization. Mitigation: Ruff's
-  `S` rules in lint and a `security` gate (Bandit, high severity fails, `# nosec` ignored); fix the
-  code instead of silencing it.
-- **Untrusted input**: callers may pass hostile strings. Mitigation: validate input and fail with
-  explicit exceptions; never `eval`, `exec` or deserialize untrusted data.
+- **Path traversal**: local runbook paths are resolved with ``Path.resolve()``
+  and must remain inside the configured ``docs_root``.
+- **Symlink escapes**: symlinks are resolved before the containment check, so
+  a symlink pointing outside ``docs_root`` is rejected.
+- **YAML alias bombs**: YAML aliases are rejected during event scanning before
+  any expansion occurs.
+- **Oversized input**: rule files are limited to 5 MB by default; local
+  markdown files are read up to 2 MB.
 
-## Publishing
+## Not defended
 
-Releases are published to PyPI with trusted publishing (OIDC) when available, never with a
-long-lived token stored in the repository.
-
-To report a vulnerability, see [SECURITY.md](../SECURITY.md).
+- **TOCTOU**: a file may be swapped between the check and a later read by the
+  caller.
+- **Network access**: the caller-provided ``http_check`` performs network
+  requests; this library never initiates them itself.
